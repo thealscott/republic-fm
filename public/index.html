@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <title>Republic FM</title>
+        <meta name="apple-mobile-web-app-capable" content="yes" /> 
+        <meta name="apple-mobile-web-app-status-bar-style" content="black" />  
+
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
         <script>
         $(document).ready(function(){
@@ -11,11 +15,12 @@
         function checkTune() {
             $.ajax({
             url: "http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=agencyrepublic&api_key=73f2eb65eb185d1941e032d24b3b9e02&format=json&limit=1",
-            context: 'JSON',
+            dataType: 'json',
             success: function(data){
-                    if(data.recenttracks.track[0].name) {
-                        $('h1').html(data.recenttracks.track[0].name);
-                        $('h2').html(data.recenttracks.track[0].artist['#text']);
+                console.log(data);
+                    if(data.recenttracks.track.name != null) {
+                        $('h1').html(data.recenttracks.track.name);
+                        $('h2').html(data.recenttracks.track.artist['#text']);
                     }
                 }     
             });
