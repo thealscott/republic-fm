@@ -17,10 +17,13 @@
             url: "http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=agencyrepublic&api_key=73f2eb65eb185d1941e032d24b3b9e02&format=json&limit=1",
             dataType: 'json',
             success: function(data){
-                console.log(data);
                     if(data.recenttracks.track.name != null) {
                         $('h1').html(data.recenttracks.track.name);
                         $('h2').html(data.recenttracks.track.artist['#text']);
+                    } 
+                    else if (data.recenttracks.track[0].name != null) {
+                        $('h1').html(data.recenttracks.track[0].name);
+                        $('h2').html(data.recenttracks.track[0].artist['#text']);
                     }
                 }     
             });
