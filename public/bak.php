@@ -17,17 +17,36 @@ $user = (isset($_GET['lastfm_user'])) ? $_GET['lastfm_user'] : 'agencyrepublic';
         
         function checkTune() {
             $.ajax({
-            url: "http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=<?php echo $user; ?>&api_key=73f2eb65eb185d1941e032d24b3b9e02&format=json&limit=1",
-            dataType: 'json',
-            success: function(data){
+                url: "http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=agencyrepublic&api_key=73f2eb65eb185d1941e032d24b3b9e02&format=json&limit=1",
+                dataType: 'json',
+                success: function(data){
+                    console.log(data);
+                    
+                    var trackName,
+                        artistName;
+
                     if(data.recenttracks.track.name != null) {
-                        $('h1').html(data.recenttracks.track.name);
-                        $('h2').html(data.recenttracks.track.artist['#text']);
+                        trackName = data.recenttracks.track.name;
+                        artistName = data.recenttracks.track.artist['#text'];
                     } 
                     else if (data.recenttracks.track[0].name != null) {
-                        $('h1').html(data.recenttracks.track[0].name);
-                        $('h2').html(data.recenttracks.track[0].artist['#text']);
+                        trackName = data.recenttracks.track[0].name;
+                        artistName = data.recenttracks.track[0].artist['#text'];
                     }
+
+                    $('h1').html(trackName);
+                    $('h2').html(artistName);
+                    getSpotifyLink(trackName);
+                }     
+            });            
+        }
+
+        function getSpotifyLink(name) {
+            $.ajax({
+                url: "http://ws.spotify.com/search/1/track.json?q="+ encodeURIComponent(name),
+                dataType: 'json',
+                success: function(data){
+                    console.log(data);
                 }     
             });
         }

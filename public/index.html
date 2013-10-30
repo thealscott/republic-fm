@@ -11,20 +11,46 @@
             checkTune();
         });
         setInterval(checkTune, 5000);
+
+        var currentTrackName;
         
         function checkTune() {
             $.ajax({
-            url: "http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=agencyrepublic&api_key=73f2eb65eb185d1941e032d24b3b9e02&format=json&limit=1",
-            dataType: 'json',
-            success: function(data){
+                url: "http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=agencyrepublic&api_key=73f2eb65eb185d1941e032d24b3b9e02&format=json&limit=1",
+                dataType: 'json',
+                success: function(data){
+                    
+                    var trackName,
+                        artistName,
+                        albumName;
+
                     if(data.recenttracks.track.name != null) {
-                        $('h1').html(data.recenttracks.track.name);
-                        $('h2').html(data.recenttracks.track.artist['#text']);
+                        trackName = data.recenttracks.track.name;
+                        artistName = data.recenttracks.track.artist['#text'];
+                        albumName = data.recenttracks.track.album['#text'];
                     } 
                     else if (data.recenttracks.track[0].name != null) {
-                        $('h1').html(data.recenttracks.track[0].name);
-                        $('h2').html(data.recenttracks.track[0].artist['#text']);
+                        trackName = data.recenttracks.track[0].name;
+                        artistName = data.recenttracks.track[0].artist['#text'];
+                        albumName = data.recenttracks.track[0].album['#text'];
                     }
+
+                    if (currentTrackName != trackName) {
+                        currentTrackName = trackName;
+                        $('h1').html(trackName);
+                        $('h2').html(artistName);
+                        getSpotifyLink(trackName +' '+ albumName +' '+ artistName);
+                    }
+                }     
+            });            
+        }
+
+        function getSpotifyLink(search) {
+            $.ajax({
+                url: "http://ws.spotify.com/search/1/track.json?q="+ encodeURIComponent(search),
+                dataType: 'json',
+                success: function(data){
+                    $('a').attr('href', data.tracks[0].href);
                 }     
             });
         }
@@ -45,6 +71,16 @@
                 margin:2%;
             }
             
+            a {
+                color:inherit;
+                text-decoration: none;
+            }
+
+            a:hover h1{
+                background:#cd0045;
+                color:black;
+            }
+
             h1 {
                 font-size:10.5em;
                 margin-top:0;
@@ -101,7 +137,7 @@
     <body>
         <div class="wrapper">
             <p>now playing...</p>
-            <h1></h1>
+            <a><h1></h1></a>
             <h2></h2>
         </div>
     </body>
